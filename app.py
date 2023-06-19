@@ -1,21 +1,68 @@
 import streamlit as st
-from newspaper import Article
+import openai
+import requests
+from bs4 import BeautifulSoup
+import json
 
-def scrape_url(url):
-    article = Article(url)
-    article.download()
-    article.parse()
-    return article.text
+openai.api_key = 'your-openai-api-key'
 
-st.title('URL Content Scraper')
+def scrape_website(url):
+    # Send a request to the website
+    r = requests.get(url)
 
-url = st.text_input('Enter a URL', '')
+    # Get the content of the request
+    web_content = r.text
+
+    # Create a BeautifulSoup object and specify the parser
+    soup = BeautifulSoup(web_content, 'html.parser')
+
+    # This is a simple extraction of all text within paragraph tags
+    # Depending on the website structure, you might need to adjust this
+    text = ' '.join([p.text for p in soup.find_all('p')])
+
+    return text
+
+st.title('Web Scraper App')
+
+# User input for the URL
+url = st.text_input('Enter a URL')
 
 if url:
-    st.write('Scraping...')
+    # Define the function
+    functions = [
+        {
+            "name": "scrape_website",
+            "description": "Scrape the content of a website",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "type": "string",
+                        "description": "The URL of the website"
+                    }
+                },
+                "required": ["url"]
+            }
+        }
+    ]
 
-    try:
-        text = scrape_url(url)
-        st.write(text)
-    except Exception as e:
-        st.write(f'Error: {e}')
+    # Make the API call
+    response = openai.ChatCompletion.create(
+        model="gpt-4-0613",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": f"Scrape the content of this website: {url}"}
+        ],
+        functions=functions
+    )
+
+    # Extract the function call from the response
+    function_call = json.loads(response['choices'][0]['message']['function_call']['arguments'])
+
+    # Check if the function name matches and if the argument matches the provided URL
+    if function_call['name'] == 'scrape_website' and function_call['arguments']['url'] == url:
+        # Perform the actual web scraping
+        scraped_content = scrape_website(url)
+
+        st.subheader('Scraped Content:')
+        st.write(scraped_content)
