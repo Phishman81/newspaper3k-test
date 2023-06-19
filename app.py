@@ -19,4 +19,3 @@ if url:
         st.write(text)
     except Exception as e:
         st.write(f'Error: {e}')
-
