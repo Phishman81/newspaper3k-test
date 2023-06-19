@@ -1,1 +1,4 @@
+streamlit==1.23.1
+newspaper3k==0.2.8
+```&#8203;``oaicite:{"number":1,"metadata":{"title":"streamlit · PyPI","url":"https://pypi.org/project/streamlit/","text":"streamlit 1.23.1 \n\npip install streamlit Copy PIP instructions\n\n Latest version  \n\nReleased:  Jun 2, 2023","pub_date":null}}``&#8203;&#8203;``oaicite:{"number":2,"metadata":{"title":"newspaper3k · PyPI","url":"https://pypi.org/project/newspaper3k/","text":"newspaper3k 0.2.8 \n\npip install newspaper3k Copy PIP instructions\n\n Latest version  \n\nReleased:  Sep 28, 2018","pub_date":null}}``&#8203;.
 
